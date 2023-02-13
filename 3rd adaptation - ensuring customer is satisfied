@@ -1,0 +1,44 @@
+from flask import Flask, request, jsonify
+import random
+
+app = Flask(__name__)
+
+# Define some sample responses for different intents
+responses = {
+    "greeting": ["Welcome to our store! How can I help you with your outdoor and activity clothing needs today?", "Hi there! How can I help you find the perfect outdoor and activity clothing and accessories?"],
+    "product_info": ["We offer a wide range of clothing and accessories for outdoor and activities such as hiking, camping, skiing, and more. What specific product are you looking for?", "Our products are designed to meet the needs of outdoor enthusiasts and adventure seekers. What type of product interests you?"],
+    "product_recommendation": ["Based on your preferences, I would recommend our [product name]. It's perfect for [specific outdoor activity]. Would you like to learn more about this product?", "Our [product name] is one of our most popular products for [specific outdoor activity]. Would you like to learn more about it?"],
+    "thanks": ["You're welcome! Let me know if you have any other questions.", "My pleasure! Don't hesitate to ask if you need more help."],
+    "goodbye": ["Thanks for visiting our store. Have a great day!", "Thanks for stopping by. Come back soon!"]
+}
+
+# Define a function to generate a random response
+def generate_response(intent):
+    return random.choice(responses[intent])
+
+# Define a route to handle incoming messages
+@app.route("/chatbot", methods=["POST"])
+def handle_message():
+    data = request.get_json()
+    message = data["message"]
+    intent = data["intent"]
+    
+    if intent == "product_recommendation":
+        # TODO: Add logic to generate product recommendations based on user preferences
+        # For now, just return a random response from the product_recommendation category
+        response = generate_response(intent)
+    else:
+        response = generate_response(intent)
+    
+    # Add extra value adds to ensure customer satisfaction
+    if intent == "goodbye":
+        # Ask for feedback and encourage customers to leave a review
+        response += " Was your experience with our chatbot helpful? Please rate your experience and leave a review to help us improve."
+    else:
+        # Add a follow-up question to encourage customer engagement
+        response += " Can I help you with anything else?"
+    
+    return jsonify({"message": response})
+
+if __name__ == '__main__':
+    app.run()
